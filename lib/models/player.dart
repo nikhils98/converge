@@ -1,9 +1,13 @@
 class Player {
   late String _name;
-  late String _word;
+  String _word;
+  String _prevWord;
   final bool _isMe;
 
-  Player({required name, required bool isMe}) : _isMe = isMe {
+  Player({required name, required bool isMe})
+      : _isMe = isMe,
+        _word = "",
+        _prevWord = "" {
     this.name = name;
   }
 
@@ -24,8 +28,11 @@ class Player {
       throw ArgumentError('Word cannot be longer than 15 characters');
     }
 
+    _prevWord = _word.isEmpty ? "" : _word;
     _word = word;
   }
+
+  String get prevWord => _prevWord;
 
   bool get isMe => _isMe;
 }

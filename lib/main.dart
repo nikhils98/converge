@@ -11,9 +11,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      home: Scaffold(
-        body: SizedBox(width: double.infinity, child: HomeView()),
-      ),
+      home: HomeView(),
     );
   }
 }

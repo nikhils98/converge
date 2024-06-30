@@ -1,4 +1,5 @@
 import 'package:converge/models/player.dart';
+import 'package:converge/utils.dart';
 
 class Game {
   final String _gameId;
@@ -12,14 +13,23 @@ class Game {
     _players = [me];
   }
 
-  get gameId => _gameId;
+  String get gameId => _gameId;
 
-  get players => _players;
+  List<Player> get players => _players;
 
   void addPlayer(Player player) {
     if (player.isMe) {
       throw ArgumentError('There can only be one game creator');
     }
     _players.add(player);
+  }
+
+  static Future<Game> createGame(Player me) async {
+    var game = Game(gameId: generateRandomString(6), me: me);
+    return game;
+  }
+
+  static Future<Game> joinGame(Game game) async {
+    return game;
   }
 }
