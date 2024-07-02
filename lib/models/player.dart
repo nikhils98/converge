@@ -14,8 +14,10 @@ class Player {
   String get name => _name;
 
   set name(String name) {
-    if (name.length > 10) {
-      throw ArgumentError('Name cannot be longer than 10 characters');
+    final err = Player.validateName(name);
+
+    if (err != null) {
+      throw ArgumentError(err);
     }
 
     _name = name;
@@ -35,4 +37,13 @@ class Player {
   String get prevWord => _prevWord;
 
   bool get isMe => _isMe;
+
+  static String? validateName(String? name) {
+    if (name == null || name.isEmpty) {
+      return "Name cannot be empty";
+    } else if (name.length > 10) {
+      return "Name cannot be longer than 10 characters";
+    }
+    return null;
+  }
 }
