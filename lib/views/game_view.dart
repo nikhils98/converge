@@ -15,37 +15,74 @@ class _GameViewState extends State<GameView> {
   @override
   Widget build(BuildContext context) {
     var game = widget.game;
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Game ${game.gameId}"),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  PlayerCell(
-                    player: game.players[0],
-                  ),
-                  if (game.players.length >= 3)
-                    PlayerCell(player: game.players[2])
-                ],
-              ),
-            ),
-            if (game.players.length >= 2)
+    return PopScope(
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+
+        final shouldPop = await _showConfirmationDialog(context);
+        if (shouldPop == true) {
+          Navigator.pop(context);
+        }
+      },
+      canPop: false,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text("Game ${game.gameId}"),
+          ),
+          body: Column(
+            children: [
               Expanded(
                 child: Row(
                   children: [
-                    PlayerCell(player: game.players[1]),
-                    if (game.players.length >= 4)
-                      PlayerCell(player: game.players[3])
+                    PlayerCell(
+                      player: game.players[0],
+                    ),
+                    if (game.players.length >= 3)
+                      PlayerCell(player: game.players[2])
                   ],
                 ),
-              )
-          ],
+              ),
+              if (game.players.length >= 2)
+                Expanded(
+                  child: Row(
+                    children: [
+                      PlayerCell(player: game.players[1]),
+                      if (game.players.length >= 4)
+                        PlayerCell(player: game.players[3])
+                    ],
+                  ),
+                )
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Future<bool?> _showConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Are you sure?'),
+          content: Text('Do you want to leave the game?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text('No'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

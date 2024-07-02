@@ -18,13 +18,13 @@ class MainApp extends StatelessWidget {
 
     return MaterialApp(
       title: "Converge",
-      theme: getThemeData(lightColorScheme),
-      darkTheme: getThemeData(darkColorScheme),
+      theme: _getThemeData(lightColorScheme),
+      darkTheme: _getThemeData(darkColorScheme),
       home: const HomeView(),
     );
   }
 
-  ThemeData getThemeData(ColorScheme colorScheme) {
+  ThemeData _getThemeData(ColorScheme colorScheme) {
     return ThemeData(
       colorScheme: colorScheme,
       textButtonTheme: TextButtonThemeData(
