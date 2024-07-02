@@ -11,10 +11,10 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lightColorScheme = ColorScheme.fromSeed(
-        seedColor: Colors.amber, brightness: Brightness.light);
+        seedColor: Colors.yellow, brightness: Brightness.light);
 
     final darkColorScheme = ColorScheme.fromSeed(
-        seedColor: Colors.amber, brightness: Brightness.dark);
+        seedColor: Colors.yellow, brightness: Brightness.dark);
 
     return MaterialApp(
       title: "Converge",

@@ -8,10 +8,11 @@ class Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = Theme.of(context).colorScheme.outline;
+    final theme = Theme.of(context);
 
+    final borderColor = theme.colorScheme.outline;
     final borderSide = BorderSide(
-      width: 2,
+      width: 0,
       color: borderColor,
     );
 
@@ -21,7 +22,7 @@ class Button extends StatelessWidget {
           top: borderSide,
           left: borderSide,
           right: borderSide,
-          bottom: BorderSide(width: 8, color: borderColor),
+          bottom: BorderSide(width: 6, color: borderColor),
         ),
       ),
       child: TextButton(
@@ -33,6 +34,7 @@ class Button extends StatelessWidget {
         onPressed: onPressed,
         child: Text(
           text,
+          style: theme.textTheme.titleMedium,
         ),
       ),
     );
