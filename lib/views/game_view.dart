@@ -60,14 +60,18 @@ class PlayerCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    final theme = Theme.of(context);
 
-    var current = theme.textTheme.displaySmall;
-    var previous = theme.textTheme.bodyLarge;
+    final current = theme.textTheme.displaySmall;
+    final previous = theme.textTheme.bodyLarge;
+
+    final borderColor = theme.colorScheme.outline;
 
     return Expanded(
       child: Container(
-        decoration: BoxDecoration(border: Border.all(width: 0.1)),
+        decoration: BoxDecoration(
+          border: Border.all(width: 0.1, color: borderColor),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(

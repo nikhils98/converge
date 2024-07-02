@@ -10,8 +10,27 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: HomeView(),
+    final lightColorScheme = ColorScheme.fromSeed(
+        seedColor: Colors.amber, brightness: Brightness.light);
+
+    final darkColorScheme = ColorScheme.fromSeed(
+        seedColor: Colors.amber, brightness: Brightness.dark);
+
+    return MaterialApp(
+      title: "Converge",
+      theme: getThemeData(lightColorScheme),
+      darkTheme: getThemeData(darkColorScheme),
+      home: const HomeView(),
+    );
+  }
+
+  ThemeData getThemeData(ColorScheme colorScheme) {
+    return ThemeData(
+      colorScheme: colorScheme,
+      textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+        foregroundColor: colorScheme.onSurface,
+      )),
     );
   }
 }

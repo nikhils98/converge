@@ -1,6 +1,7 @@
 import 'package:converge/models/game.dart';
 import 'package:converge/models/player.dart';
 import 'package:converge/views/game_view.dart';
+import 'package:converge/widgets/button.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
@@ -35,9 +36,15 @@ class _HomeViewState extends State<HomeView> {
               const SizedBox(
                 height: 16,
               ),
-              SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
+              Row(
+                children: [
+                  const Expanded(
+                    child: SizedBox(),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Button(
+                      text: "New / Join",
                       onPressed: () async {
                         var player = Player(name: _name, isMe: true);
                         Game game;
@@ -60,7 +67,13 @@ class _HomeViewState extends State<HomeView> {
                                       game: game,
                                     )));
                       },
-                      child: const Text("New / Join"))),
+                    ),
+                  ),
+                  const Expanded(
+                    child: SizedBox(),
+                  )
+                ],
+              ),
               const SizedBox(
                 height: 16,
               ),
