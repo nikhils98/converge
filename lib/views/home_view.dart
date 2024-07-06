@@ -55,25 +55,14 @@ class _HomeViewState extends State<HomeView> {
                             return;
                           }
 
-                          var player = Player(name: _name, isMe: true);
-                          Game game;
-
-                          if (_gameId.isEmpty) {
-                            game = await Game.createGame(player);
-                          } else {
-                            game = await Game.joinGame(
-                                Game(gameId: _gameId, me: player));
-                          }
-
-                          game.addPlayer(Player(name: "yo", isMe: false));
-                          game.addPlayer(Player(name: "yo1", isMe: false));
-                          game.addPlayer(Player(name: "yo2", isMe: false));
+                          final player = Player(name: _name, isMe: true);
 
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => GameView(
-                                        game: game,
+                                        player: player,
+                                        gameId: _gameId,
                                       )));
                         },
                       ),

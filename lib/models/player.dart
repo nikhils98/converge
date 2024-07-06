@@ -46,4 +46,11 @@ class Player {
     }
     return null;
   }
+
+  factory Player.fromJson(Map<String, dynamic> json) {
+    return Player(
+      name: json['name'],
+      isMe: true,
+    );
+  }
 }
