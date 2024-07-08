@@ -1,4 +1,5 @@
 import 'package:converge/views/home_view.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -19,7 +20,6 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: "Converge",
       theme: _getThemeData(lightColorScheme),
-      darkTheme: _getThemeData(darkColorScheme),
       home: const HomeView(),
     );
   }

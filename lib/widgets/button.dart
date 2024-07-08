@@ -12,26 +12,19 @@ class Button extends StatelessWidget {
 
     final borderColor = theme.colorScheme.outline;
     final borderSide = BorderSide(
-      width: 0,
+      width: 2,
       color: borderColor,
     );
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border(
-          top: borderSide,
-          left: borderSide,
-          right: borderSide,
-          bottom: BorderSide(width: 6, color: borderColor),
-        ),
-      ),
-      child: TextButton(
-        style: TextButton.styleFrom(
-          shape: const RoundedRectangleBorder(
+    return TextButton(
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.zero,
-          ),
-        ),
-        onPressed: onPressed,
+            side: BorderSide(width: 1, color: borderColor)),
+      ),
+      onPressed: onPressed,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: Text(
           text,
           style: theme.textTheme.titleMedium,

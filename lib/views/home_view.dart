@@ -2,6 +2,7 @@ import 'package:converge/models/game.dart';
 import 'package:converge/models/player.dart';
 import 'package:converge/views/game_view.dart';
 import 'package:converge/widgets/button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
@@ -21,62 +22,65 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                HomeTextField(
-                  hintText: "Your Name",
-                  onChanged: (value) => _name = value,
-                  validator: (name) => Player.validateName(name),
-                ),
-                HomeTextField(
-                  hintText: "Game ID (Optional)*",
-                  onChanged: (value) => _gameId = value,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
+        body: Center(
+          child: SizedBox(
+            width: kIsWeb ? 480 : double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Expanded(
-                      child: SizedBox(),
+                    HomeTextField(
+                      hintText: "Your Name",
+                      onChanged: (value) => _name = value,
+                      validator: (name) => Player.validateName(name),
                     ),
-                    Expanded(
-                      flex: 2,
-                      child: Button(
-                        text: "New / Join",
-                        onPressed: () async {
-                          if (_formKey.currentState!.validate() == false) {
-                            return;
-                          }
-
-                          final player = Player(name: _name, isMe: true);
-
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => GameView(
-                                        player: player,
-                                        gameId: _gameId,
-                                      )));
-                        },
-                      ),
+                    HomeTextField(
+                      hintText: "Game ID (Optional)*",
+                      onChanged: (value) => _gameId = value,
                     ),
-                    const Expanded(
-                      child: SizedBox(),
-                    )
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: SizedBox(),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Button(
+                            text: "New / Join",
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate() == false) {
+                                return;
+                              }
+
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GameView(
+                                            playerName: _name,
+                                            gameId: _gameId,
+                                          )));
+                            },
+                          ),
+                        ),
+                        const Expanded(
+                          child: SizedBox(),
+                        )
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 24,
+                    ),
+                    const Text("* Leave Game ID blank to start new game")
                   ],
                 ),
-                const SizedBox(
-                  height: 24,
-                ),
-                const Text("* Leave Game ID blank to start new game")
-              ],
+              ),
             ),
           ),
         ),

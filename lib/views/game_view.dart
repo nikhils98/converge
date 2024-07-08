@@ -1,16 +1,17 @@
 import 'package:converge/models/game.dart';
 import 'package:converge/models/player.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:converge/utils.dart';
+import 'package:flutter/services.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class GameView extends StatefulWidget {
-  const GameView({super.key, required this.player, required this.gameId});
+  const GameView({super.key, required this.playerName, required this.gameId});
 
-  final Player player;
+  final String playerName;
   final String gameId;
 
   @override
@@ -33,7 +34,16 @@ class _GameViewState extends State<GameView> {
     super.initState();
     var request = {
       "action": "JoinGame",
-      "data": {"gameId": widget.gameId, "playerName": widget.player.name}
+      "data": {"gameId": widget.gameId, "playerName": widget.playerName}
+    };
+
+    _channel.sink.add(jsonEncode(request));
+  }
+
+  void onSubmit(String value) {
+    var request = {
+      "action": "EnterWord",
+      "data": {"word": value}
     };
 
     _channel.sink.add(jsonEncode(request));
@@ -63,35 +73,58 @@ class _GameViewState extends State<GameView> {
               final game = Game.fromJson(json);
 
               return Scaffold(
-                appBar: AppBar(
-                  title: Text("Game ${game.gameId}"),
-                ),
-                body: Column(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          PlayerCell(
-                            player: game.players[0],
-                          ),
-                          if (game.players.length >= 3)
-                            PlayerCell(player: game.players[2])
-                        ],
-                      ),
-                    ),
-                    if (game.players.length >= 2)
-                      Expanded(
-                        child: Row(
+                  appBar: AppBar(
+                    title: Text("Round"),
+                    leading: Icon(Icons.close),
+                    actions: [
+                      Text("Game ID: ${game.gameId}"),
+                      IconButton(
+                          onPressed: () async {
+                            await Clipboard.setData(
+                                ClipboardData(text: game.gameId));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('Game ID copied')));
+                          },
+                          icon: Icon(Icons.copy)),
+                    ],
+                  ),
+                  body: game.players.length >= 2
+                      ? Column(
                           children: [
-                            PlayerCell(player: game.players[1]),
-                            if (game.players.length >= 4)
-                              PlayerCell(player: game.players[3])
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  PlayerCell(
+                                    onSubmit: onSubmit,
+                                    player: game.players[0],
+                                  ),
+                                  if (game.players.length >= 4)
+                                    PlayerCell(
+                                        onSubmit: onSubmit,
+                                        player: game.players[3])
+                                ],
+                              ),
+                            ),
+                            if (game.players.length >= 2)
+                              Expanded(
+                                child: Row(
+                                  children: [
+                                    PlayerCell(
+                                        onSubmit: onSubmit,
+                                        player: game.players[1]),
+                                    if (game.players.length >= 3)
+                                      PlayerCell(
+                                          onSubmit: onSubmit,
+                                          player: game.players[2])
+                                  ],
+                                ),
+                              )
                           ],
-                        ),
-                      )
-                  ],
-                ),
-              );
+                        )
+                      : Center(
+                          child: Text("Waiting for others..."),
+                        ));
             }),
       ),
     );
@@ -125,12 +158,10 @@ class _GameViewState extends State<GameView> {
 }
 
 class PlayerCell extends StatelessWidget {
-  const PlayerCell({
-    super.key,
-    required this.player,
-  });
+  const PlayerCell({super.key, required this.player, required this.onSubmit});
 
   final Player player;
+  final Function(String) onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -155,15 +186,23 @@ class PlayerCell extends StatelessWidget {
               Expanded(
                   flex: 2,
                   child: Center(
-                      child: Text(
-                    player.word,
-                    style: current,
-                  ))),
+                      child: player.isMe && player.word.isEmpty
+                          ? TextField(
+                              onSubmitted: onSubmit,
+                              style: current,
+                              decoration: const InputDecoration(
+                                hintText: "Enter word here",
+                              ),
+                            )
+                          : Text(
+                              player.word,
+                              style: current,
+                            ))),
               Expanded(
                   flex: 1,
                   child: Center(
                       child: Text(
-                    player.prevWord,
+                    player.prevWord.isEmpty ? "..." : player.prevWord,
                     style: previous,
                   )))
             ],

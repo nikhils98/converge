@@ -1,27 +1,14 @@
 class Player {
-  late String _name;
+  String id;
+  String name;
   String _word;
-  String _prevWord;
+  String prevWord;
   final bool _isMe;
 
-  Player({required name, required bool isMe})
+  Player({required this.id, required this.name, required bool isMe})
       : _isMe = isMe,
         _word = "",
-        _prevWord = "" {
-    this.name = name;
-  }
-
-  String get name => _name;
-
-  set name(String name) {
-    final err = Player.validateName(name);
-
-    if (err != null) {
-      throw ArgumentError(err);
-    }
-
-    _name = name;
-  }
+        prevWord = "";
 
   String get word => _word;
 
@@ -30,11 +17,8 @@ class Player {
       throw ArgumentError('Word cannot be longer than 15 characters');
     }
 
-    _prevWord = _word.isEmpty ? "" : _word;
     _word = word;
   }
-
-  String get prevWord => _prevWord;
 
   bool get isMe => _isMe;
 
@@ -47,10 +31,16 @@ class Player {
     return null;
   }
 
-  factory Player.fromJson(Map<String, dynamic> json) {
-    return Player(
+  factory Player.fromJson(Map<String, dynamic> json, String myId) {
+    final player = Player(
+      id: json['id'],
       name: json['name'],
-      isMe: true,
+      isMe: json['id'] == myId,
     );
+
+    player.word = json['word'];
+    player.prevWord = json['prevWord'];
+
+    return player;
   }
 }

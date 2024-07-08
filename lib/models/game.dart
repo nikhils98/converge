@@ -14,7 +14,9 @@ class Game {
 
   factory Game.fromJson(Map<String, dynamic> json) {
     final playersJson = json["game"]['players'] as List;
-    final players = playersJson.map((json) => Player.fromJson(json)).toList();
+    final players = playersJson
+        .map((playerJson) => Player.fromJson(playerJson, json["playerId"]))
+        .toList();
 
     return Game(gameId: json["id"], players: players);
   }
