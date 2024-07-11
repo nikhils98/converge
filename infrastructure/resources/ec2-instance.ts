@@ -111,14 +111,14 @@ export class Ec2Instance {
       }
     );
 
-    const ami = "ami-09f4416095bd1b775"; // ubuntu-server-22-arm for t4g instances
+    const ami = "ami-0674e550ebeaf53d0"; // ubuntu-server-22 amd64
 
     const ec2Name = prefixName("ec2-instance");
     this.instance = new aws.ec2.Instance(
       ec2Name,
       {
         tags: { Name: ec2Name },
-        instanceType: aws.ec2.InstanceType.T4g_Micro,
+        instanceType: aws.ec2.InstanceType.T3_Micro,
         ami,
         keyName: config.require("ec2KeyPair"),
         userData,
