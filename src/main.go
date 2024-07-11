@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gin-gonic/autotls"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -33,6 +34,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/ws", handleWebSocket)
 	router.Run(":8080")
+	fmt.Print(autotls.Run(router, "converge.dijkstrai.com"))
 }
 
 func handleWebSocket(c *gin.Context) {
