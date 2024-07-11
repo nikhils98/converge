@@ -54,7 +54,10 @@ export class ServerEcsService {
             portMappings: [
               { containerPort: 8080, hostPort: 8080, protocol: "tcp" }
             ],
-            environment: []
+            environment: [{
+              name: "GIN_MODE",
+              value: "release"
+            }]
           }
         ])),
     });

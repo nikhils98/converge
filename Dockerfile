@@ -25,8 +25,6 @@ WORKDIR /root/
 # Copy the built Go binary from the builder stage
 COPY --from=builder /app/server .
 
-ENV GIN_MODE=release
-
 # Expose the application port
 EXPOSE 8080
 
