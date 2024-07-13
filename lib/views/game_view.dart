@@ -4,6 +4,7 @@ import 'package:converge/models/game.dart';
 import 'package:converge/models/player.dart';
 import 'package:converge/widgets/button.dart';
 import 'package:converge/widgets/countdown.dart';
+import 'package:converge/widgets/typing.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:converge/utils.dart';
@@ -27,6 +28,7 @@ class _GameViewState extends State<GameView> {
     Uri.parse('wss://converge.dijkstrai.com/ws'),
   );
   String _word = "";
+  bool _isRunning = false;
 
   @override
   void dispose() {
@@ -100,12 +102,14 @@ class _GameViewState extends State<GameView> {
               Map<String, dynamic> json = jsonDecode(snapshot.data);
               final game = Game.fromJson(json);
 
+              print(game);
+
               return Scaffold(
                   appBar: AppBar(
                     title: Row(
                       children: [
                         Text("R${game.round}"),
-                        SizedBox(
+                        const SizedBox(
                           width: 8,
                         ),
                         if (game.isRunning)
@@ -299,10 +303,19 @@ class PlayerCell extends StatelessWidget {
                                   onReady(!player.isReady);
                                 },
                                 child: Text("Ready")))
-                        : Text(
-                            player.word,
-                            style: largeFont,
-                          ))),
+                        : player.word.isEmpty && isRunning
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Typing(speed: 1.5, delay: 0),
+                                  Typing(speed: 1.5, delay: 125),
+                                  Typing(speed: 1.5, delay: 350),
+                                ],
+                              )
+                            : Text(
+                                player.word,
+                                style: largeFont,
+                              ))),
             Expanded(
                 flex: 1,
                 child: Center(

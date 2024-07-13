@@ -5,16 +5,19 @@ class Game {
   final List<Player> _players;
   final int _round;
   final bool _isRunning;
+  final bool _isWon;
 
   Game(
       {required String gameId,
       required List<Player> players,
       required int round,
-      required bool isRunning})
+      required bool isRunning,
+      required bool isWon})
       : _gameId = gameId,
         _players = players,
         _round = round,
-        _isRunning = isRunning;
+        _isRunning = isRunning,
+        _isWon = isWon;
 
   String get gameId => _gameId;
 
@@ -23,6 +26,8 @@ class Game {
   int get round => _round;
 
   bool get isRunning => _isRunning;
+
+  bool get isWon => _isWon;
 
   factory Game.fromJson(Map<String, dynamic> json) {
     final gameJson = json["game"];
@@ -35,6 +40,7 @@ class Game {
         gameId: gameJson["id"],
         round: gameJson["round"],
         isRunning: gameJson["isRunning"],
+        isWon: gameJson["isWon"],
         players: players);
   }
 
