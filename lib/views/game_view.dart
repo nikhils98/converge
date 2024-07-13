@@ -102,7 +102,9 @@ class _GameViewState extends State<GameView> {
               Map<String, dynamic> json = jsonDecode(snapshot.data);
               final game = Game.fromJson(json);
 
-              print(game);
+              final playerMe = game.players.firstWhere((player) => player.isMe);
+              final otherPlayers =
+                  game.players.where((player) => !player.isMe).toList();
 
               return Scaffold(
                   appBar: AppBar(
@@ -138,7 +140,7 @@ class _GameViewState extends State<GameView> {
                           icon: Icon(Icons.copy)),
                     ],
                   ),
-                  body: game.players.length >= 2
+                  body: otherPlayers.isNotEmpty
                       ? Column(
                           children: [
                             Expanded(
@@ -146,15 +148,15 @@ class _GameViewState extends State<GameView> {
                                 children: [
                                   PlayerCell(
                                     onSubmitWord: onSubmitWord,
-                                    player: game.players[0],
+                                    player: playerMe,
                                     isRunning: game.isRunning,
                                     onReady: onReady,
                                     onTypeWord: onTypeWord,
                                   ),
-                                  if (game.players.length >= 4)
+                                  if (otherPlayers.length >= 3)
                                     PlayerCell(
                                       onSubmitWord: onSubmitWord,
-                                      player: game.players[3],
+                                      player: otherPlayers[2],
                                       isRunning: game.isRunning,
                                       onReady: onReady,
                                       onTypeWord: onTypeWord,
@@ -162,28 +164,27 @@ class _GameViewState extends State<GameView> {
                                 ],
                               ),
                             ),
-                            if (game.players.length >= 2)
-                              Expanded(
-                                child: Row(
-                                  children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  PlayerCell(
+                                    onSubmitWord: onSubmitWord,
+                                    player: otherPlayers[0],
+                                    isRunning: game.isRunning,
+                                    onReady: onReady,
+                                    onTypeWord: onTypeWord,
+                                  ),
+                                  if (otherPlayers.length >= 2)
                                     PlayerCell(
                                       onSubmitWord: onSubmitWord,
                                       player: game.players[1],
                                       isRunning: game.isRunning,
                                       onReady: onReady,
                                       onTypeWord: onTypeWord,
-                                    ),
-                                    if (game.players.length >= 3)
-                                      PlayerCell(
-                                        onSubmitWord: onSubmitWord,
-                                        player: game.players[2],
-                                        isRunning: game.isRunning,
-                                        onReady: onReady,
-                                        onTypeWord: onTypeWord,
-                                      )
-                                  ],
-                                ),
-                              )
+                                    )
+                                ],
+                              ),
+                            )
                           ],
                         )
                       : const Center(
