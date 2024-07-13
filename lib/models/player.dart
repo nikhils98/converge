@@ -4,11 +4,17 @@ class Player {
   String _word;
   String prevWord;
   final bool _isMe;
+  final bool _isReady;
 
-  Player({required this.id, required this.name, required bool isMe})
+  Player(
+      {required this.id,
+      required this.name,
+      required bool isMe,
+      required bool isReady})
       : _isMe = isMe,
         _word = "",
-        prevWord = "";
+        prevWord = "",
+        _isReady = isReady;
 
   String get word => _word;
 
@@ -22,6 +28,8 @@ class Player {
 
   bool get isMe => _isMe;
 
+  bool get isReady => _isReady;
+
   static String? validateName(String? name) {
     if (name == null || name.isEmpty) {
       return "Name cannot be empty";
@@ -33,10 +41,10 @@ class Player {
 
   factory Player.fromJson(Map<String, dynamic> json, String myId) {
     final player = Player(
-      id: json['id'],
-      name: json['name'],
-      isMe: json['id'] == myId,
-    );
+        id: json['id'],
+        name: json['name'],
+        isMe: json['id'] == myId,
+        isReady: json['isReady']);
 
     player.word = json['word'];
     player.prevWord = json['prevWord'];

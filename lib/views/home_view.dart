@@ -35,13 +35,18 @@ class _HomeViewState extends State<HomeView> {
                   children: [
                     HomeTextField(
                       hintText: "Your Name",
-                      onChanged: (value) => _name = value,
+                      onChanged: (value) {
+                        _name = value;
+                      },
                       validator: (name) => Player.validateName(name),
                     ),
                     HomeTextField(
-                      hintText: "Game ID (Optional)*",
-                      onChanged: (value) => _gameId = value,
-                    ),
+                        hintText: "Game ID (Optional)*",
+                        onChanged: (value) {
+                          setState(() {
+                            _gameId = value;
+                          });
+                        }),
                     const SizedBox(
                       height: 16,
                     ),
@@ -53,7 +58,7 @@ class _HomeViewState extends State<HomeView> {
                         Expanded(
                           flex: 2,
                           child: Button(
-                            text: "New / Join",
+                            text: _gameId.isEmpty ? "New Game" : "Join Game",
                             onPressed: () async {
                               if (_formKey.currentState!.validate() == false) {
                                 return;

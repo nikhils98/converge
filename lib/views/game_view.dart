@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:converge/models/game.dart';
 import 'package:converge/models/player.dart';
+import 'package:converge/widgets/button.dart';
+import 'package:converge/widgets/countdown.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:converge/utils.dart';
@@ -20,8 +24,9 @@ class GameView extends StatefulWidget {
 
 class _GameViewState extends State<GameView> {
   final _channel = WebSocketChannel.connect(
-    Uri.parse('ws://${kIsWeb ? "localhost" : "10.0.2.2"}:8080/ws'),
+    Uri.parse('wss://converge.dijkstrai.com/ws'),
   );
+  String _word = "";
 
   @override
   void dispose() {
@@ -40,7 +45,11 @@ class _GameViewState extends State<GameView> {
     _channel.sink.add(jsonEncode(request));
   }
 
-  void onSubmit(String value) {
+  void onTypeWord(String value) {
+    _word = value;
+  }
+
+  void onSubmitWord(String value) {
     var request = {
       "action": "EnterWord",
       "data": {"word": value}
@@ -49,8 +58,20 @@ class _GameViewState extends State<GameView> {
     _channel.sink.add(jsonEncode(request));
   }
 
+  void onReady(bool value) {
+    var request = {
+      "action": "PlayerReady",
+      "data": {"isReady": value}
+    };
+
+    _channel.sink.add(jsonEncode(request));
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final backgroundColor = theme.colorScheme.surface;
+
     return PopScope(
       onPopInvoked: (didPop) async {
         if (didPop) return;
@@ -66,7 +87,14 @@ class _GameViewState extends State<GameView> {
             stream: _channel.stream,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
+                return Scaffold(
+                    appBar: AppBar(
+                        leading: IconButton(
+                            onPressed: () {
+                              Navigator.of(context).maybePop();
+                            },
+                            icon: const Icon(Icons.close))),
+                    body: const Center(child: CircularProgressIndicator()));
               }
 
               Map<String, dynamic> json = jsonDecode(snapshot.data);
@@ -74,8 +102,25 @@ class _GameViewState extends State<GameView> {
 
               return Scaffold(
                   appBar: AppBar(
-                    title: Text("Round"),
-                    leading: Icon(Icons.close),
+                    title: Row(
+                      children: [
+                        Text("R${game.round}"),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        if (game.isRunning)
+                          Countdown(
+                            onCompletion: () {
+                              onSubmitWord(_word.isEmpty ? "-" : _word);
+                            },
+                          )
+                      ],
+                    ),
+                    leading: IconButton(
+                        onPressed: () {
+                          Navigator.of(context).maybePop();
+                        },
+                        icon: Icon(Icons.close)),
                     actions: [
                       Text("Game ID: ${game.gameId}"),
                       IconButton(
@@ -96,13 +141,20 @@ class _GameViewState extends State<GameView> {
                               child: Row(
                                 children: [
                                   PlayerCell(
-                                    onSubmit: onSubmit,
+                                    onSubmitWord: onSubmitWord,
                                     player: game.players[0],
+                                    isRunning: game.isRunning,
+                                    onReady: onReady,
+                                    onTypeWord: onTypeWord,
                                   ),
                                   if (game.players.length >= 4)
                                     PlayerCell(
-                                        onSubmit: onSubmit,
-                                        player: game.players[3])
+                                      onSubmitWord: onSubmitWord,
+                                      player: game.players[3],
+                                      isRunning: game.isRunning,
+                                      onReady: onReady,
+                                      onTypeWord: onTypeWord,
+                                    )
                                 ],
                               ),
                             ),
@@ -111,19 +163,28 @@ class _GameViewState extends State<GameView> {
                                 child: Row(
                                   children: [
                                     PlayerCell(
-                                        onSubmit: onSubmit,
-                                        player: game.players[1]),
+                                      onSubmitWord: onSubmitWord,
+                                      player: game.players[1],
+                                      isRunning: game.isRunning,
+                                      onReady: onReady,
+                                      onTypeWord: onTypeWord,
+                                    ),
                                     if (game.players.length >= 3)
                                       PlayerCell(
-                                          onSubmit: onSubmit,
-                                          player: game.players[2])
+                                        onSubmitWord: onSubmitWord,
+                                        player: game.players[2],
+                                        isRunning: game.isRunning,
+                                        onReady: onReady,
+                                        onTypeWord: onTypeWord,
+                                      )
                                   ],
                                 ),
                               )
                           ],
                         )
-                      : Center(
-                          child: Text("Waiting for others..."),
+                      : const Center(
+                          child: Text(
+                              "Invite others by copying the code on top right!"),
                         ));
             }),
       ),
@@ -158,17 +219,26 @@ class _GameViewState extends State<GameView> {
 }
 
 class PlayerCell extends StatelessWidget {
-  const PlayerCell({super.key, required this.player, required this.onSubmit});
+  const PlayerCell(
+      {super.key,
+      required this.player,
+      required this.onSubmitWord,
+      required this.isRunning,
+      required this.onReady,
+      required this.onTypeWord});
 
   final Player player;
-  final Function(String) onSubmit;
+  final bool isRunning;
+  final Function(String) onSubmitWord;
+  final Function(String) onTypeWord;
+  final Function(bool) onReady;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final current = theme.textTheme.displaySmall;
-    final previous = theme.textTheme.bodyLarge;
+    final largeFont = theme.textTheme.displaySmall;
+    final mediumFont = theme.textTheme.titleMedium;
 
     final borderColor = theme.colorScheme.outline;
 
@@ -179,34 +249,68 @@ class PlayerCell extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 1, child: Text(player.name)),
-              Expanded(
-                  flex: 2,
-                  child: Center(
-                      child: player.isMe && player.word.isEmpty
-                          ? TextField(
-                              onSubmitted: onSubmit,
-                              style: current,
-                              decoration: const InputDecoration(
-                                hintText: "Enter word here",
-                              ),
-                            )
-                          : Text(
-                              player.word,
-                              style: current,
-                            ))),
-              Expanded(
-                  flex: 1,
-                  child: Center(
-                      child: Text(
-                    player.prevWord.isEmpty ? "..." : player.prevWord,
-                    style: previous,
-                  )))
-            ],
-          ),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Expanded(
+                flex: 1,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Icon(
+                        Icons.circle_rounded,
+                        color: player.isReady ? Colors.green : Colors.red,
+                        size: 8,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      player.name,
+                      style: mediumFont,
+                    ),
+                  ],
+                )),
+            Expanded(
+                flex: 2,
+                child: Center(
+                    child: player.isMe && player.word.isEmpty
+                        ? (isRunning
+                            ? TextField(
+                                onSubmitted: onSubmitWord,
+                                onChanged: onTypeWord,
+                                style: largeFont,
+                                decoration: const InputDecoration(
+                                  hintText: "Enter word here",
+                                ),
+                              )
+                            : TextButton(
+                                style: TextButton.styleFrom(
+                                    shape: CircleBorder(
+                                        side: BorderSide(
+                                            width: 1, color: borderColor)),
+                                    padding: EdgeInsets.all(32),
+                                    backgroundColor: player.isReady
+                                        ? theme.colorScheme.secondaryContainer
+                                        : theme.colorScheme.surface),
+                                onPressed: () {
+                                  onReady(!player.isReady);
+                                },
+                                child: Text("Ready")))
+                        : Text(
+                            player.word,
+                            style: largeFont,
+                          ))),
+            Expanded(
+                flex: 1,
+                child: Center(
+                    child: Text(
+                  player.prevWord.isEmpty ? "..." : player.prevWord,
+                  style: mediumFont,
+                )))
+          ]),
         ),
       ),
     );

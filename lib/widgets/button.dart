@@ -9,12 +9,7 @@ class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     final borderColor = theme.colorScheme.outline;
-    final borderSide = BorderSide(
-      width: 2,
-      color: borderColor,
-    );
 
     return TextButton(
       style: TextButton.styleFrom(
