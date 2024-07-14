@@ -361,17 +361,29 @@ class PlayerWord extends StatelessWidget {
     }
 
     return isRunning
-        ? Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Typing(speed: 1.5, delay: 0),
-              Typing(speed: 1.5, delay: 125),
-              Typing(speed: 1.5, delay: 350),
-            ],
-          )
+        ? player.word.isEmpty
+            ? const Typing()
+            : const SubmittedIcon()
         : Text(
             player.word,
             style: largeFont,
           );
+  }
+}
+
+class SubmittedIcon extends StatelessWidget {
+  const SubmittedIcon({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+        padding: const EdgeInsets.all(32),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(1000),
+            color: theme.colorScheme.secondaryContainer),
+        child: Icon(Icons.check));
   }
 }

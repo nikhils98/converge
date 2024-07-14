@@ -2,17 +2,34 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-class Typing extends StatefulWidget {
-  Typing({required this.speed, required this.delay});
+class Typing extends StatelessWidget {
+  const Typing({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        OscillatingDot(speed: 1.5, delay: 0),
+        OscillatingDot(speed: 1.5, delay: 125),
+        OscillatingDot(speed: 1.5, delay: 350),
+      ],
+    );
+  }
+}
+
+class OscillatingDot extends StatefulWidget {
+  const OscillatingDot({super.key, required this.speed, required this.delay});
 
   final double speed;
   final int delay;
 
   @override
-  _TypingState createState() => _TypingState();
+  _OscillatingDotState createState() => _OscillatingDotState();
 }
 
-class _TypingState extends State<Typing> with SingleTickerProviderStateMixin {
+class _OscillatingDotState extends State<OscillatingDot>
+    with SingleTickerProviderStateMixin {
   AnimationController? _controller;
   Animation<double>? _animation;
 
