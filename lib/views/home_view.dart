@@ -1,4 +1,3 @@
-import 'package:converge/models/game.dart';
 import 'package:converge/models/player.dart';
 import 'package:converge/views/game_view.dart';
 import 'package:converge/widgets/button.dart';
