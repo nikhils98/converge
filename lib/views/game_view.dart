@@ -4,6 +4,7 @@ import 'package:converge/models/game.dart';
 import 'package:converge/models/player.dart';
 import 'package:converge/widgets/countdown.dart';
 import 'package:converge/widgets/typing.dart';
+import 'package:converge/widgets/victory_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -24,6 +25,7 @@ class _GameViewState extends State<GameView> {
     Uri.parse('wss://converge.dijkstrai.com/ws'),
   );
   String _word = "";
+  bool _isVictoryAlertShowing = false;
 
   @override
   void dispose() {
@@ -62,6 +64,16 @@ class _GameViewState extends State<GameView> {
     };
 
     _channel.sink.add(jsonEncode(request));
+  }
+
+  void onRestart() {
+    var request = {
+      "action": "Restart",
+    };
+
+    _channel.sink.add(jsonEncode(request));
+    _isVictoryAlertShowing = false;
+    Navigator.pop(context);
   }
 
   @override
@@ -108,6 +120,26 @@ class _GameViewState extends State<GameView> {
               }
 
               final game = Game.fromJson(json);
+
+              if (game.isWon && !_isVictoryAlertShowing) {
+                _isVictoryAlertShowing = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  showDialog(
+                      context: context,
+                      builder: (context) => VictoryAlert(
+                            word: _word,
+                            onExit: () {
+                              _isVictoryAlertShowing = false;
+                              Navigator.pop(context);
+                            },
+                            onRestart: () => onRestart(),
+                          ),
+                      barrierDismissible: false);
+                });
+              } else if (!game.isWon && _isVictoryAlertShowing) {
+                _isVictoryAlertShowing = false;
+                Navigator.pop(context);
+              }
 
               final playerMe = game.players.firstWhere((player) => player.isMe);
               final otherPlayers =
