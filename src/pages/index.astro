@@ -1,5 +1,8 @@
 ---
 import "../components/GlobalStyles.astro";
+import { Image } from "astro:assets";
+import img1 from "../assets/img1.jpg";
+import img2 from "../assets/img2.jpg";
 ---
 
 <html lang="en">
@@ -8,7 +11,6 @@ import "../components/GlobalStyles.astro";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <link rel="stylesheet" href="" />
     <title>Converge</title>
   </head>
   <body>
@@ -19,12 +21,12 @@ import "../components/GlobalStyles.astro";
         style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px"
       >
         <div style="display: flex; gap: 20px">
-          <div>image 1</div>
-          <div>image 2</div>
+          <Image src={img1} width={256} alt={""} />
+          <Image src={img2} width={256} alt={""} />
         </div>
         <p>Play with your friends and try to converge!</p>
       </div>
-      <div>
+      <div style="padding-bottom: 32px;">
         <a href="/privacy">Privacy policy</a>
       </div>
     </div>
