@@ -156,7 +156,11 @@ class _GameViewState extends State<GameView> {
                         if (game.isRunning)
                           Countdown(
                             onCompletion: () {
-                              onSubmitWord(_word.isEmpty ? "-" : _word);
+                              var notSubmitted =
+                                  game.isRunning && playerMe.isReady;
+                              if (notSubmitted) {
+                                onSubmitWord(_word.isEmpty ? "-" : _word);
+                              }
                             },
                           )
                       ],
