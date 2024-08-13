@@ -93,6 +93,8 @@ func handlePlayerConnectionLost(conn *websocket.Conn) error {
 	if len(game.Players) > 0 {
 		if len(game.Players) == 1 {
 			game.IsRunning = false
+			game.IsWon = false
+			game.Round = 1
 		}
 		notify(NotifyGame{Game: *game, Id: playerConn.GameID})
 	} else {
@@ -111,14 +113,14 @@ func handleJoinGame(data JoinGameReq, conn *websocket.Conn) {
 		data.GameID = generateRandomID()
 		GameMap[data.GameID] = &Game{Round: 1, IsRunning: false, IsWon: false, Players: []*Player{&player}}
 	} else if game, exists := GameMap[data.GameID]; exists {
-		if len(game.Players) == 4 {
-			conn.WriteJSON(gin.H{"error": "Only 4 players can join"})
+		if len(game.Players) == 2 {
+			conn.WriteJSON(gin.H{"error": "Only 2 players can join"})
 			return
 		}
 
 		game.Players = append(game.Players, &player)
 	} else {
-		conn.WriteJSON(gin.H{"error": "Game ID does not exist"})
+		conn.WriteJSON(gin.H{"error": "Game ID is invalid"})
 		return
 	}
 
