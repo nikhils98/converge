@@ -10,6 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 
+const uri = 'wss://converge.dijkstrai.com/ws';
+// const uri = 'ws://${kIsWeb ? "localhost" : "10.0.2.2"}:8080/ws';
+
 class GameView extends StatefulWidget {
   const GameView({super.key, required this.playerName, required this.gameId});
 
@@ -22,7 +25,7 @@ class GameView extends StatefulWidget {
 
 class _GameViewState extends State<GameView> {
   final _channel = WebSocketChannel.connect(
-    Uri.parse('wss://converge.dijkstrai.com/ws'),
+    Uri.parse(uri),
   );
   String _word = "";
   bool _isVictoryAlertShowing = false;
@@ -105,6 +108,8 @@ class _GameViewState extends State<GameView> {
                             icon: const Icon(Icons.close))),
                     body: const Center(child: CircularProgressIndicator()));
               }
+
+              print(snapshot.data);
 
               Map<String, dynamic> json = jsonDecode(snapshot.data);
 
