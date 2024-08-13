@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "79950998265",
+    "project_id": "converge-271d0",
+    "storage_bucket": "converge-271d0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:79950998265:android:fa869c52de134264141028",
+        "android_client_info": {
+          "package_name": "com.fibonacci.converge"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB08cW_SNXIkzXPX8mJh9vPv5skyMZYiXA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
