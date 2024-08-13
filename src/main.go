@@ -41,6 +41,7 @@ func handleWebSocket(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to upgrade to WebSocket"})
 		return
 	}
+
 	defer conn.Close()
 
 	conn.SetCloseHandler(func(code int, text string) error {
@@ -52,7 +53,13 @@ func handleWebSocket(c *gin.Context) {
 
 		err = conn.ReadJSON(&req)
 		if err != nil {
+			if err.Error() == "websocket: close 1006 (abnormal closure): unexpected EOF" {
+				handlePlayerConnectionLost(conn)
+				return
+			}
+
 			conn.WriteJSON(gin.H{"error": "Invalid request"})
+
 			return
 		}
 
