@@ -25,6 +25,7 @@ class MainApp extends StatelessWidget {
       title: "Converge",
       theme: _getThemeData(lightColorScheme),
       home: const HomeView(),
+      debugShowCheckedModeBanner: false,
     );
   }
 
