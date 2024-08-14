@@ -1,8 +1,5 @@
 ---
 import "../components/GlobalStyles.astro";
-import { Image } from "astro:assets";
-import img1 from "../assets/img1.jpg";
-import img2 from "../assets/img2.jpg";
 ---
 
 <html lang="en">
@@ -21,8 +18,8 @@ import img2 from "../assets/img2.jpg";
         style="height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px"
       >
         <div style="display: flex; gap: 20px">
-          <Image src={img1} width={256} alt={""} />
-          <Image src={img2} width={256} alt={""} />
+          <img src="img1.jpg" width={256} alt={""} />
+          <img src="img2.jpg" width={256} alt={""} />
         </div>
         <p>Play with your friends and try to converge!</p>
       </div>
