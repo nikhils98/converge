@@ -3,6 +3,7 @@ import 'package:converge/views/game_view.dart';
 import 'package:converge/widgets/button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -21,72 +22,91 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Center(
-          child: SizedBox(
-            width: kIsWeb ? 480 : double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    HomeTextField(
-                      hintText: "Your Name",
-                      onChanged: (value) {
-                        _name = value;
-                      },
-                      validator: (name) => Player.validateName(name),
-                    ),
-                    HomeTextField(
-                        hintText: "Game ID (Optional)*",
-                        onChanged: (value) {
-                          setState(() {
-                            _gameId = value;
-                          });
-                        }),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Row(
-                      children: [
-                        const Expanded(
-                          child: SizedBox(),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Button(
-                            text: _gameId.isEmpty ? "New Game" : "Join Game",
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate() == false) {
-                                return;
-                              }
-
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => GameView(
-                                            playerName: _name,
-                                            gameId: _gameId,
-                                          )));
+        body: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: SizedBox(
+                  width: kIsWeb ? 480 : double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          HomeTextField(
+                            hintText: "Your Name",
+                            onChanged: (value) {
+                              _name = value;
                             },
+                            validator: (name) => Player.validateName(name),
                           ),
-                        ),
-                        const Expanded(
-                          child: SizedBox(),
-                        )
-                      ],
+                          HomeTextField(
+                              hintText: "Game ID (Optional)*",
+                              onChanged: (value) {
+                                setState(() {
+                                  _gameId = value;
+                                });
+                              }),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          Row(
+                            children: [
+                              const Expanded(
+                                child: SizedBox(),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Button(
+                                  text: _gameId.isEmpty
+                                      ? "New Game"
+                                      : "Join Game",
+                                  onPressed: () async {
+                                    if (_formKey.currentState!.validate() ==
+                                        false) {
+                                      return;
+                                    }
+
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => GameView(
+                                                  playerName: _name,
+                                                  gameId: _gameId,
+                                                )));
+                                  },
+                                ),
+                              ),
+                              const Expanded(
+                                child: SizedBox(),
+                              )
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 24,
+                          ),
+                          const Text("* Leave Game ID blank to start new game")
+                        ],
+                      ),
                     ),
-                    const SizedBox(
-                      height: 24,
-                    ),
-                    const Text("* Leave Game ID blank to start new game")
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: InkWell(
+                  child: Text(
+                    "Privacy policy",
+                    style: TextStyle(color: Colors.deepPurple),
+                  ),
+                  onTap: () => launchUrl(
+                      Uri.parse("https://playconverge.com/privacy/"))),
+            )
+          ],
         ),
       ),
     );
