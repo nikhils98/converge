@@ -12,7 +12,7 @@ import "../components/GlobalStyles.astro";
   </head>
   <body>
     <div
-      style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 32px"
+      style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 32px"
     >
       <nav style="display: flex; flex-direction: row; gap: 16px">
         <a href="/">Home</a>
@@ -20,18 +20,9 @@ import "../components/GlobalStyles.astro";
         <a href="mailto:nikhil.satiani@gmail.com">Contact</a>
       </nav>
       <div
-        style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px"
+        style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; padding-top: 32px"
       >
-        <div>
-          <h1 class="title">Converge</h1>
-        </div>
-        <div style="display: flex; gap: 20px">
-          <img src="img1.jpg" width={256} alt={""} />
-          <img src="img2.jpg" width={256} alt={""} />
-        </div>
-        <div>
-          <p>Play with your friends and match words as quick as you can!</p>
-        </div>
+        <iframe src="/app/index.html"></iframe>
         <div style="padding: 32px">
           <a
             href="https://play.google.com/store/apps/details?id=com.fibonacci.converge"
