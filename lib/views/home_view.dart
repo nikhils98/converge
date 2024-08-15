@@ -96,16 +96,17 @@ class _HomeViewState extends State<HomeView> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: InkWell(
-                  child: Text(
-                    "Privacy policy",
-                    style: TextStyle(color: Colors.deepPurple),
-                  ),
-                  onTap: () => launchUrl(
-                      Uri.parse("https://playconverge.com/privacy/"))),
-            )
+            if (!kIsWeb)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: InkWell(
+                    child: const Text(
+                      "Privacy policy",
+                      style: TextStyle(color: Colors.deepPurple),
+                    ),
+                    onTap: () => launchUrl(
+                        Uri.parse("https://playconverge.com/privacy/"))),
+              )
           ],
         ),
       ),
