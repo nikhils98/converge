@@ -64,7 +64,6 @@ func handleWebSocket(c *gin.Context) {
 	* If the pong isn't received within the deadline, the connection is closed.
 	 */
 	conn.SetPongHandler(func(appData string) error {
-		fmt.Println("received pong")
 		return conn.SetReadDeadline(time.Now().Add(60 * time.Second))
 	})
 
@@ -73,7 +72,6 @@ func handleWebSocket(c *gin.Context) {
 	go func() {
 		for {
 			time.Sleep(30 * time.Second)
-			fmt.Println("sent ping")
 			if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 				return
 			}
