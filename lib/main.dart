@@ -19,9 +19,6 @@ class MainApp extends StatelessWidget {
     final lightColorScheme = ColorScheme.fromSeed(
         seedColor: Colors.yellow, brightness: Brightness.light);
 
-    final darkColorScheme = ColorScheme.fromSeed(
-        seedColor: Colors.yellow, brightness: Brightness.dark);
-
     return MaterialApp(
       title: "Converge",
       theme: _getThemeData(lightColorScheme),
