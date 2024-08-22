@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -56,6 +57,28 @@ func handleWebSocket(c *gin.Context) {
 	conn.SetCloseHandler(func(code int, text string) error {
 		return handlePlayerConnectionLost(conn)
 	})
+
+	/**
+	* The server sends a ping message every 30 seconds,
+	* and it expects to receive a pong response within 60 seconds.
+	* If the pong isn't received within the deadline, the connection is closed.
+	 */
+	conn.SetPongHandler(func(appData string) error {
+		fmt.Println("received pong")
+		return conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+	})
+
+	conn.SetReadDeadline(time.Now().Add(60 * time.Second))
+
+	go func() {
+		for {
+			time.Sleep(30 * time.Second)
+			fmt.Println("sent ping")
+			if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+				return
+			}
+		}
+	}()
 
 	for {
 		var req Req
