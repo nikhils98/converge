@@ -5,12 +5,14 @@ import 'package:converge/models/player.dart';
 import 'package:converge/widgets/countdown.dart';
 import 'package:converge/widgets/typing.dart';
 import 'package:converge/widgets/victory_alert.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 
-const uri = 'wss://converge.dijkstrai.com/ws';
+const uri = 'wss://api.playconverge.com/ws';
+
 // const uri = 'ws://${kIsWeb ? "localhost" : "10.0.2.2"}:8080/ws';
 
 class GameView extends StatefulWidget {
@@ -31,12 +33,6 @@ class _GameViewState extends State<GameView> {
   bool _isVictoryAlertShowing = false;
 
   @override
-  void dispose() {
-    _channel.sink.close();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     super.initState();
     var request = {
@@ -45,6 +41,12 @@ class _GameViewState extends State<GameView> {
     };
 
     _channel.sink.add(jsonEncode(request));
+  }
+
+  @override
+  void dispose() {
+    _channel.sink.close();
+    super.dispose();
   }
 
   void onTypeWord(String value) {
@@ -109,8 +111,6 @@ class _GameViewState extends State<GameView> {
                     body: const Center(child: CircularProgressIndicator()));
               }
 
-              print(snapshot.data);
-
               Map<String, dynamic> json = jsonDecode(snapshot.data);
 
               if (json["error"] != null) {
@@ -161,8 +161,8 @@ class _GameViewState extends State<GameView> {
                         if (game.isRunning)
                           Countdown(
                             onCompletion: () {
-                              var notSubmitted =
-                                  game.isRunning && playerMe.isReady;
+                              var notSubmitted = playerMe.word.isEmpty;
+
                               if (notSubmitted) {
                                 onSubmitWord(_word.isEmpty ? "-" : _word);
                               }
