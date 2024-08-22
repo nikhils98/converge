@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -31,6 +33,13 @@ var (
 
 func main() {
 	router := gin.Default()
+
+	config := cors.DefaultConfig()
+	config.AllowOriginFunc = func(origin string) bool {
+		return strings.HasPrefix(origin, "http://localhost") || origin == "https://playconverge.com"
+	}
+	router.Use(cors.New(config))
+
 	router.GET("/ws", handleWebSocket)
 	router.Run(":8080")
 }
