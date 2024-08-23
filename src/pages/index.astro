@@ -22,7 +22,10 @@ import "../components/GlobalStyles.astro";
       <div
         style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; padding-top: 32px"
       >
-        <iframe src="/app/index.html"></iframe>
+        <div class="game">
+          <p class="loading">Loading...</p>
+          <iframe src="/app/index.html"></iframe>
+        </div>
         <div style="padding: 32px">
           <a
             href="https://play.google.com/store/apps/details?id=com.fibonacci.converge"
