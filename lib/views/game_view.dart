@@ -26,21 +26,47 @@ class GameView extends StatefulWidget {
 }
 
 class _GameViewState extends State<GameView> {
-  final _channel = WebSocketChannel.connect(
-    Uri.parse(uri),
-  );
+  late WebSocketChannel _channel;
   String _word = "";
   bool _isVictoryAlertShowing = false;
+  String? _connectionError;
 
   @override
   void initState() {
     super.initState();
+    _connect();
+  }
+
+  void _connect() {
+    _connectionError = null;
+
+    final channel = WebSocketChannel.connect(Uri.parse(uri));
+    _channel = channel;
+
     var request = {
       "action": "JoinGame",
       "data": {"gameId": widget.gameId, "playerName": widget.playerName}
     };
 
-    _channel.sink.add(jsonEncode(request));
+    // Wait for the connection to be established before sending, and surface any
+    // failure (server down, cold start, no network) as a retryable error rather
+    // than letting it crash the app with an unhandled WebSocketChannelException.
+    channel.ready.timeout(const Duration(seconds: 30)).then((_) {
+      channel.sink.add(jsonEncode(request));
+    }).catchError((Object error) {
+      if (!mounted) return;
+      setState(() {
+        _connectionError =
+            "Couldn't connect to the server. Please check your internet connection and try again.";
+      });
+    });
+  }
+
+  void _retry() {
+    try {
+      _channel.sink.close();
+    } catch (_) {}
+    setState(_connect);
   }
 
   @override
@@ -100,18 +126,29 @@ class _GameViewState extends State<GameView> {
         child: StreamBuilder(
             stream: _channel.stream,
             builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Scaffold(
-                    appBar: AppBar(
-                        leading: IconButton(
-                            onPressed: () {
-                              Navigator.of(context).maybePop();
-                            },
-                            icon: const Icon(Icons.close))),
-                    body: const Center(child: CircularProgressIndicator()));
+              if (_connectionError != null) {
+                return _buildMessageScaffold(_connectionError!,
+                    showRetry: true);
               }
 
-              Map<String, dynamic> json = jsonDecode(snapshot.data);
+              if (snapshot.hasError) {
+                return _buildMessageScaffold(
+                    "Connection lost. Please check your internet connection and try again.",
+                    showRetry: true);
+              }
+
+              if (!snapshot.hasData) {
+                return _buildMessageScaffold(null, showSpinner: true);
+              }
+
+              Map<String, dynamic> json;
+              try {
+                json = jsonDecode(snapshot.data);
+              } catch (_) {
+                return _buildMessageScaffold(
+                    "Something went wrong. Please try again.",
+                    showRetry: true);
+              }
 
               if (json["error"] != null) {
                 return Scaffold(
@@ -240,6 +277,36 @@ class _GameViewState extends State<GameView> {
                               "Invite others by copying the code on top right!"),
                         ));
             }),
+      ),
+    );
+  }
+
+  Widget _buildMessageScaffold(String? message,
+      {bool showSpinner = false, bool showRetry = false}) {
+    return Scaffold(
+      appBar: AppBar(
+          leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).maybePop();
+              },
+              icon: const Icon(Icons.close))),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (showSpinner) const CircularProgressIndicator(),
+              if (message != null)
+                Text(message, textAlign: TextAlign.center),
+              if (showRetry) ...[
+                const SizedBox(height: 16),
+                ElevatedButton(
+                    onPressed: _retry, child: const Text("Retry")),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
