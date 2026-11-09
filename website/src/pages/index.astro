@@ -1,0 +1,43 @@
+---
+import "../components/GlobalStyles.astro";
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/png" href="/icon.png" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Converge</title>
+  </head>
+  <body>
+    <div
+      style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 32px"
+    >
+      <nav style="display: flex; flex-direction: row; gap: 16px">
+        <a href="/">Home</a>
+        <a href="/privacy">Privacy</a>
+        <a href="mailto:nikhil.satiani@gmail.com">Contact</a>
+      </nav>
+      <div
+        style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; padding-top: 32px"
+      >
+        <div class="game">
+          <p class="loading">Loading...</p>
+          <iframe src="/app/index.html"></iframe>
+        </div>
+        <div style="padding: 32px">
+          <a
+            href="https://play.google.com/store/apps/details?id=com.fibonacci.converge"
+            target="_blank"
+            ><img
+              src="get-it-on-google.png"
+              alt="Get it on google"
+              height="48px"
+            /></a
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
