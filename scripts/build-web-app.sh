@@ -4,6 +4,6 @@
 set -e
 cd "$(dirname "$0")/.."
 (cd app && flutter build web --release --base-href /app/)
-rm -rf website/public/app
-cp -r app/build/web website/public/app
-echo "Copied the web build to website/public/app."
+rm -rf web/public/app
+cp -r app/build/web web/public/app
+echo "Copied the web build to web/public/app."
