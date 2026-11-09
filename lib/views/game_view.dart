@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'dart:convert';
 
-const uri = 'wss://api.playconverge.com/ws';
+const uri = 'wss://converge-server.onrender.com/ws';
 
 // const uri = 'ws://${kIsWeb ? "localhost" : "10.0.2.2"}:8080/ws';
 

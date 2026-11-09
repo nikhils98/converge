@@ -161,7 +161,7 @@ For example John starts with \"red\" and Jane with \"fruit\". In the second roun
                             style: TextStyle(color: Colors.deepPurple),
                           ),
                           onTap: () => launchUrl(
-                              Uri.parse("https://playconverge.com/privacy/"))),
+                              Uri.parse("https://converge-dg4.pages.dev/privacy/"))),
                     )
                 ],
               ),

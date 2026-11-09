@@ -1,7 +1,7 @@
 name: converge
 description: "Converge at the same word"
 publish_to: 'none'
-version: 0.3.0+6
+version: 0.3.0+7
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
