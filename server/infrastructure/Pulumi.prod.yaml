@@ -1,0 +1,7 @@
+encryptionsalt: v1:XDkXTziGX7s=:v1:pEItdDEX/7S67oox:gLRfUx+zZOkV8MoDoPKR7Grj7TexXA==
+config:
+  aws:region: me-south-1
+  converge:ec2KeyPair: converge-prod
+  converge:publicSubnetIds:
+    - subnet-01841ef09db648382
+  converge:vpcId: vpc-0ddd824f83179808e
