@@ -1,1 +1,0 @@
-pulumi passphrase for prod stack: `prod`
