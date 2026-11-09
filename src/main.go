@@ -37,7 +37,7 @@ func main() {
 
 	config := cors.DefaultConfig()
 	config.AllowOriginFunc = func(origin string) bool {
-		return strings.HasPrefix(origin, "http://localhost") || origin == "https://playconverge.com"
+		return strings.HasPrefix(origin, "http://localhost") || origin == "https://converge-dg4.pages.dev"
 	}
 	router.Use(cors.New(config))
 
