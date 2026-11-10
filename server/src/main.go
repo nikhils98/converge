@@ -42,6 +42,7 @@ func main() {
 	router.Use(cors.New(config))
 
 	router.GET("/ws", handleWebSocket)
+	router.GET("/health", func(c *gin.Context) { c.String(http.StatusOK, "ok") })
 	router.Run(":8080")
 }
 
